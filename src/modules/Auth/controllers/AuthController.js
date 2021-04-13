@@ -14,7 +14,7 @@ class AuthController {
       let user = await User.findOne({ email: req.body.email });
     
       if (user) {
-        throw new AppError('E-mail address already registered.', 400);
+        next(new AppError('E-mail address already registered.', 400));
       }
 
       user = await User.create(req.body);
@@ -22,7 +22,7 @@ class AuthController {
       const refreshToken = await user.generateRefreshToken();
       return res.status(201).json({ accessToken, refreshToken, user });
     } catch (error) {
-      throw new AppError(error, 500);
+      next(new AppError(error));
     }
   }
 
@@ -30,7 +30,7 @@ class AuthController {
     try {
       const user = await User.findOne({ email: req.body.email });
       if (!user) {
-        throw new AppError('No user found.', 400);
+        next(new AppError('No user found', 400));
       } else {
         const valid = await bcrypt.compare(req.body.password, user.password);
         if (valid) {
@@ -38,7 +38,7 @@ class AuthController {
           const refreshToken = await user.generateRefreshToken();
           return res.status(201).json({ accessToken, refreshToken, user });
         } else {
-          throw new AppError('Incorrect password!', 401);
+          next(new AppError(error));
         }
       }
     } catch (error) {
@@ -50,11 +50,11 @@ class AuthController {
     try {
       const { refreshToken } = req.body
       if (!refreshToken) {
-        throw new AppError('Access denied! Token not sent.', 403);
+        next(new AppError('Access denied! Token not sent.', 403));
       } else {
         const tokenDoc = await Token.findOne({ token: refreshToken });
         if (!tokenDoc) {
-          throw new AppError('Token has expired!', 401);
+          next(new AppError('Token has expired!', 401));
         } else {
           const payload = jwt.verify(tokenDoc.token, REFRESH_TOKEN_SECRET);
           const accessToken = jwt.sign({ user: payload }, ACCESS_TOKEN_SECRET, {
@@ -64,7 +64,7 @@ class AuthController {
         }
       }
     } catch (error) {
-      throw new AppError(error);
+      next(new AppError(error));
     }
   }
 
@@ -74,7 +74,7 @@ class AuthController {
       await Token.findOneAndDelete({ token: refreshToken });
       return res.status(200).json({ success: 'User logged out!' });
     } catch (error) {
-      throw new AppError(error);
+      next(new AppError(error));
     }
   }
 }

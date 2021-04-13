@@ -21,34 +21,34 @@ class ProductController {
       let products = await Product.find(where).populate('category').skip(parseInt(skip)).limit(parseInt(limit));
       return res.status(200).json(products);
     } catch (error) {
-      throw new AppError(error);
+      next(new AppError(error));
     }
   }
 
-  async store(req, res) {
+  async store(req, res, next) {
     try {
       const { title, description, price, categoryId } = req.body;
       
-      if (!title || !description || !price || !categoryId) {
-        throw new AppError('Required fields not sent!');
+      if (!title || !description || !categoryId) {
+        next(new AppError('Required fields not sent!'));
       }
 
       let product = await Product.create(req.body);
-
       return res.status(200).json(product);
     } catch (error) {
-      throw new AppError(error);
+      next(new AppError(error));
     }
   }
 
-  async update(req, res) {
+
+  async update(req, res, next) {
     try {
       const data = req.body;
       const { _id } = data;
       let product = await Product.findByIdAndUpdate(_id, data, { new: true });
       return res.status(200).json(product);
     } catch (error) {
-      throw new AppError(error);
+      next(new AppError(error));
     }
   }
 
@@ -57,13 +57,13 @@ class ProductController {
       const { id } = req.query;
 
       if (!_id) {
-        throw new AppError('Required fields not sent!');
+        next(new AppError('Required fields not sent!'));
       }
 
       await Product.findByIdAndDelete(id);
       return res.sendStatus(200);
     } catch (error) {
-      throw new AppError(error);
+      next(new AppError(error));
     }
   }
 }
