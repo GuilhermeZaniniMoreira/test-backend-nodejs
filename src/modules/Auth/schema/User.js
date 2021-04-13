@@ -21,6 +21,10 @@ const UserSchema = new Schema({
     required: true,
     select: false,
     type: String
+  },
+  role: {
+    type: String,
+    required: true,
   }
 }, {
   timestamps: true
