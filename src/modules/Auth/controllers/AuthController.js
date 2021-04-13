@@ -18,7 +18,6 @@ class AuthController {
       user = await User.create(req.body);
       const accessToken = await user.generateToken();
       const refreshToken = await user.generateRefreshToken();
-      console.log(accessToken, refreshToken);
       return res.status(201).json({ accessToken, refreshToken, user });
     } catch (error) {
       next(error);
