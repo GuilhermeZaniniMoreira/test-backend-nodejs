@@ -4,6 +4,9 @@ import mongoose from 'mongoose';
 import routes from './routes';
 import 'dotenv/config';
 
+import swagger from 'swagger-ui-express';
+import docs from './docs';
+
 import AppError from './shared/Errors/AppError';
 class App {
   constructor () {
@@ -28,6 +31,7 @@ class App {
 
   routes() {
     this.express.use(routes);
+    this.express.use('/api-docs', swagger.serve, swagger.setup(docs));
   }
 
   exceptionHandler() {
