@@ -1,5 +1,5 @@
 import Category from '../schema/Category';
-import AppError from '../../../shared/Errors/AppError';
+import AppError from '../../../shared/errors/AppError';
 class CategoriesController {
   async index(req, res) {
     try {

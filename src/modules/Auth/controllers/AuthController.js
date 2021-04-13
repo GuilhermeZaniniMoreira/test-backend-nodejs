@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../schema/User';
 import Token from '../schema/Token';
 
-import AppError from '../../../shared/Errors/AppError';
+import AppError from '../../../shared/errors/AppError';
 
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 

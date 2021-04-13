@@ -1,5 +1,5 @@
 import Product from '../schema/Product';
-import AppError from '../../../shared/Errors/AppError';
+import AppError from '../../../shared/errors/AppError';
 class ProductController {
   async index(req, res) {
     try {
@@ -28,8 +28,8 @@ class ProductController {
   async store(req, res, next) {
     try {
       const { title, description, price, categoryId } = req.body;
-      
-      if (!title || !description || !categoryId) {
+
+      if (!title || !description || !price || !categoryId) {
         next(new AppError('Required fields not sent!'));
       }
 
