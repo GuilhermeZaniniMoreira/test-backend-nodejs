@@ -13,7 +13,8 @@ export default {
                   email: { type: 'string', required: true },
                   firstName: { type: 'string', required: true },
                   lastName: { type: 'string', required: true },
-                  password: { type: 'string', required: true }
+                  password: { type: 'string', required: true },
+                  role: { type: 'string', required: true },
                 },
               },
             },
