@@ -5,6 +5,7 @@ To install all the Node modules use NPM or Yarn.
 `bash
 yarn
 `
+
 or
 
 `bash
@@ -22,6 +23,7 @@ The access token e refresh token are being used for authentication using JWT.
 `bash
 yarn dev
 `
+
 or
 
 `bash
@@ -33,6 +35,8 @@ npm run dev
 `bash
 yarn start
 `
+
+or
 
 `bash
 npm run start
