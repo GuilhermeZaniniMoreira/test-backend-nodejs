@@ -48,3 +48,14 @@ After running the project, you can access http://localhost:3333/api-docs to see 
 
 Product and Category routes are not using the authentication middleware, in order to use it you can uncomment the lines using the middleware in index.js file inside routes in each module. To use protected routes with Swagger it's necessary to generate the JWT token and add it using the Authorize button.
 
+<strong>Running the tests</strong>
+
+`bash
+yarn test
+`
+
+or
+
+`bash
+npm run test
+`
