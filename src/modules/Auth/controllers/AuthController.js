@@ -6,31 +6,30 @@ import Token from '../schema/Token';
 
 import AppError from '../../../shared/errors/AppError';
 
-const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
-
 class AuthController {
-  async signup (req, res) {
+  async signup(req, res, next) {
     try {
       let user = await User.findOne({ email: req.body.email });
     
       if (user) {
-        next(new AppError('E-mail address already registered.', 400));
+        throw new AppError('E-mail address already registered.', 400);
       }
 
       user = await User.create(req.body);
       const accessToken = await user.generateToken();
       const refreshToken = await user.generateRefreshToken();
+      console.log(accessToken, refreshToken);
       return res.status(201).json({ accessToken, refreshToken, user });
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 
-  async login (req, res) {
+  async login(req, res, next) {
     try {
       const user = await User.findOne({ email: req.body.email });
       if (!user) {
-        next(new AppError('No user found', 400));
+        throw new AppError('No user found', 400);
       } else {
         const valid = await bcrypt.compare(req.body.password, user.password);
         if (valid) {
@@ -38,7 +37,7 @@ class AuthController {
           const refreshToken = await user.generateRefreshToken();
           return res.status(201).json({ accessToken, refreshToken, user });
         } else {
-          next(new AppError(error));
+          next(error);
         }
       }
     } catch (error) {
@@ -46,35 +45,35 @@ class AuthController {
     }
   }
 
-  async generateRefreshToken (req, res) {
+  async generateRefreshToken(req, res, next) {
     try {
       const { refreshToken } = req.body
       if (!refreshToken) {
-        next(new AppError('Access denied! Token not sent.', 403));
+        throw new AppError('Access denied! Token not sent.', 403);
       } else {
         const tokenDoc = await Token.findOne({ token: refreshToken });
         if (!tokenDoc) {
-          next(new AppError('Token has expired!', 401));
+          throw new AppError('Token has expired!', 401);
         } else {
-          const payload = jwt.verify(tokenDoc.token, REFRESH_TOKEN_SECRET);
-          const accessToken = jwt.sign({ user: payload }, ACCESS_TOKEN_SECRET, {
+          const payload = jwt.verify(tokenDoc.token, process.env.REFRESH_TOKEN_SECRET);
+          const accessToken = jwt.sign({ user: payload }, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: '10m'
           })
           return res.status(200).json({ accessToken });
         }
       }
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 
-  async logout (req, res) {
+  async logout(req, res, next) {
     try {
       const { refreshToken } = req.body;
       await Token.findOneAndDelete({ token: refreshToken });
       return res.status(200).json({ success: 'User logged out!' });
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 }

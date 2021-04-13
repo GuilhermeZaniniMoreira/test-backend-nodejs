@@ -21,7 +21,7 @@ class ProductController {
       let products = await Product.find(where).populate('category').skip(parseInt(skip)).limit(parseInt(limit));
       return res.status(200).json(products);
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 
@@ -30,13 +30,13 @@ class ProductController {
       const { title, description, price, categoryId } = req.body;
 
       if (!title || !description || !price || !categoryId) {
-        next(new AppError('Required fields not sent!'));
+        throw new AppError('Required fields not sent!', 400);
       }
 
       let product = await Product.create(req.body);
       return res.status(200).json(product);
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 
@@ -48,7 +48,7 @@ class ProductController {
       let product = await Product.findByIdAndUpdate(_id, data, { new: true });
       return res.status(200).json(product);
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 
@@ -57,13 +57,13 @@ class ProductController {
       const { id } = req.query;
 
       if (!_id) {
-        next(new AppError('Required fields not sent!'));
+        throw new AppError('Required fields not sent!', 400);
       }
 
       await Product.findByIdAndDelete(id);
       return res.sendStatus(200);
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 }

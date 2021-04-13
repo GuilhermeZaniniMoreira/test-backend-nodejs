@@ -36,7 +36,7 @@ class App {
 
   exceptionHandler() {
     this.express.use((err, req, res, next) => {
-      if (err instanceof AppError) {
+      if (err.message && err.statusCode) {
         return res.status(err.statusCode).json({ status: 'error', error: err.message });
       }
       return res.status(500).json({ status: 'error', message: 'Internal server error!' });

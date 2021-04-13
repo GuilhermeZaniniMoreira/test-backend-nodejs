@@ -15,13 +15,13 @@ class CategoriesController {
       const { title } = req.body;
 
       if (!title) {
-        next(new AppError('Required fields not sent!', 400));
+        throw new AppError('Required fields not sent!', 400);
       }
 
       let category = await Category.create(req.body);
       return res.status(200).json(category);
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 
@@ -32,7 +32,7 @@ class CategoriesController {
       let category = await Product.findByIdAndUpdate(_id, data, { new: true });
       return res.status(200).json(category);
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 
@@ -42,7 +42,7 @@ class CategoriesController {
       let category = await Category.findByIdAndDelete(id);
       return res.status(200).json(category);
     } catch (error) {
-      next(new AppError(error));
+      next(error);
     }
   }
 }
