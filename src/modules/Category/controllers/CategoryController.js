@@ -1,7 +1,7 @@
 import Category from '../schema/Category';
 
 class CategoriesController {
-  async index(res, req) {
+  async index(req, res) {
     try {
       let categories = await Category.find();
       return res.status(200).json(categories);
@@ -10,9 +10,10 @@ class CategoriesController {
     }
   }
 
-  async store(res, req) {
+  async store(req, res) {
     try {
       const data = req.body;
+      console.log(data);
       let category = await Category.create(data);
       return res.status(200).json(category);
     } catch (error) {
@@ -20,17 +21,18 @@ class CategoriesController {
     }
   }
 
-  async update(res, req) {
+  async update(req, res) {
     try {
       const data = req.body;
-      let category = await Category.findByIdAndUpdate(data);
+      const { _id } = data;
+      let product = await Product.findByIdAndUpdate(_id, data, { new: true });
       return res.status(200).json(category);
     } catch (error) {
       return res.status(500).json({ error: 'Internal server error!' })
     }
   }
 
-  async delete(res, req) {
+  async delete(req, res) {
     try {
       const { id } = req.query;
       let category = await Category.findByIdAndDelete(id);
