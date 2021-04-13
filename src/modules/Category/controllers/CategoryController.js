@@ -1,23 +1,27 @@
 import Category from '../schema/Category';
-
+import AppError from '../../../shared/Errors/AppError';
 class CategoriesController {
   async index(req, res) {
     try {
       let categories = await Category.find();
       return res.status(200).json(categories);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' })
+      throw new AppError(error);
     }
   }
 
   async store(req, res) {
     try {
-      const data = req.body;
-      console.log(data);
-      let category = await Category.create(data);
+      const { title } = req.body;
+
+      if (!title) {
+        throw new AppError('Required fields not sent!');
+      }
+
+      let category = await Category.create(req.body);
       return res.status(200).json(category);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' })
+      throw new AppError(error);
     }
   }
 
@@ -25,10 +29,10 @@ class CategoriesController {
     try {
       const data = req.body;
       const { _id } = data;
-      let product = await Product.findByIdAndUpdate(_id, data, { new: true });
+      let category = await Product.findByIdAndUpdate(_id, data, { new: true });
       return res.status(200).json(category);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' })
+      throw new AppError(error);
     }
   }
 
@@ -38,7 +42,7 @@ class CategoriesController {
       let category = await Category.findByIdAndDelete(id);
       return res.status(200).json(category);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' })
+      throw new AppError(error);
     }
   }
 }

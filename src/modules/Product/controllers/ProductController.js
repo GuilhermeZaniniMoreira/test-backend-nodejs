@@ -1,5 +1,5 @@
 import Product from '../schema/Product';
-
+import AppError from '../../../shared/Errors/AppError';
 class ProductController {
   async index(req, res) {
     try {
@@ -21,17 +21,23 @@ class ProductController {
       let products = await Product.find(where).populate('category').skip(parseInt(skip)).limit(parseInt(limit));
       return res.status(200).json(products);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' });
+      throw new AppError(error);
     }
   }
 
   async store(req, res) {
     try {
-      const data = req.body;
-      let product = await Product.create(data);
+      const { title, description, price, categoryId } = req.body;
+      
+      if (!title || !description || !price || !categoryId) {
+        throw new AppError('Required fields not sent!');
+      }
+
+      let product = await Product.create(req.body);
+
       return res.status(200).json(product);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' });
+      throw new AppError(error);
     }
   }
 
@@ -42,17 +48,22 @@ class ProductController {
       let product = await Product.findByIdAndUpdate(_id, data, { new: true });
       return res.status(200).json(product);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' });
+      throw new AppError(error);
     }
   }
 
   async delete(req, res) {
     try {
       const { id } = req.query;
+
+      if (!_id) {
+        throw new AppError('Required fields not sent!');
+      }
+
       await Product.findByIdAndDelete(id);
       return res.sendStatus(200);
     } catch (error) {
-      return res.status(500).json({ error: 'Internal server error!' });
+      throw new AppError(error);
     }
   }
 }
