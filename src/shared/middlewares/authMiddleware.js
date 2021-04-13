@@ -4,7 +4,8 @@ import 'dotenv/config'
 import AppError from '../errors/AppError';
 
 const auth = (req, res, next) => {
-  const token = req.get('x-auth-token')
+  const { authorization } = req.headers;
+  const [, token] = authorization.split(' ');
   if (!token) {
     next(new AppError('Access denied, token missing!', 401));
   } else {
